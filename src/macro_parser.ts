@@ -26,22 +26,31 @@ export class MacroParser {
         return Parser.seq([dollar, macro, equal, arg_parser]);
     }
 
-    private num = Parser.regex(/\d+/);
+    // 記号
     private comma = Parser.char(',');
+
+    // 引数にとる値
+    private num = Parser.regex(/\d+/);
+    private bool = Parser.choice([Parser.char('0'), Parser.char('1')]);
+    private item_range = Parser.regex(/^(1[0-2]|[0-9])/);
+
+    // 引数のパターン
     private position = Parser.seq([this.num, this.comma, this.num]);
+    private set_item = Parser.seq([this.item_range, this.comma, this.num]);
 
-    private bool = Parser.choice([Parser.char('0'), Parser.char('1')])
-
+    // 各マクロのパーサ
     private imgplayer = this.make_macro_parser('imgplayer', this.position);
     private imgyesno = this.make_macro_parser('imgyesno', this.position);
     private hpmax = this.make_macro_parser('hpmax', this.num);
     private save = this.make_macro_parser('save', this.bool);
+    private item = this.make_macro_parser('item', this.set_item);
 
     private macro_parser = Parser.choice([
         this.imgplayer,
         this.imgyesno,
         this.hpmax,
         this.save,
+        this.item,
     ]);
 
     parse: () => ParseResult = () => {
