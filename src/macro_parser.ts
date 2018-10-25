@@ -44,6 +44,8 @@ export class MacroParser {
     private hpmax = this.make_macro_parser('hpmax', this.num);
     private save = this.make_macro_parser('save', this.bool);
     private item = this.make_macro_parser('item', this.set_item);
+    private default = this.make_macro_parser('default', this.bool);
+    private oldmap = this.make_macro_parser('oldmap', this.bool);
 
     private macro_parser = Parser.choice([
         this.imgplayer,
@@ -51,6 +53,8 @@ export class MacroParser {
         this.hpmax,
         this.save,
         this.item,
+        this.default,
+        this.oldmap,
     ]);
 
     parse: () => ParseResult = () => {
