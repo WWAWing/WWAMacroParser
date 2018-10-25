@@ -64,3 +64,16 @@ describe('parse save', () => {
         expect(new MacroParser(message).parse()).toEqual(message);
     });
 });
+
+describe('parse item', () => {
+    it('success', () => {
+        let message = '$item=0,5';
+        expect(new MacroParser(message).parse()).toEqual(new Macro('item', ['0', '5']));
+        message = '$item=11,90';
+        expect(new MacroParser(message).parse()).toEqual(new Macro('item', ['11', '90']));
+    });
+    it('failure', () => {
+        const message = '$item=23,5';
+        expect(new MacroParser(message).parse()).toEqual(message);
+    });
+});
