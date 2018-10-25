@@ -77,3 +77,27 @@ describe('parse item', () => {
         expect(new MacroParser(message).parse()).toEqual(message);
     });
 });
+
+describe('parse default', () => {
+    const name = 'default';
+    it('success', () => {
+        let message = '$default=0';
+        expect(new MacroParser(`$${name}=0`).parse()).toEqual(new Macro(name, ['0']));
+        message = '$default=1';
+        expect(new MacroParser(`$${name}=1`).parse()).toEqual(new Macro(name, ['1']));
+    });
+    it('failure', () => {
+        expect(new MacroParser(`$${name}=2`).parse()).toEqual(`$${name}=2`);
+    });
+});
+
+describe('parse oldmap', () => {
+    const name = 'oldmap';
+    it('success', () => {
+        expect(new MacroParser(`$${name}=0`).parse()).toEqual(new Macro(name, ['0']));
+        expect(new MacroParser(`$${name}=1`).parse()).toEqual(new Macro(name, ['1']));
+    });
+    it('failure', () => {
+        expect(new MacroParser(`$${name}=2`).parse()).toEqual(`$${name}=2`);
+    });
+});
