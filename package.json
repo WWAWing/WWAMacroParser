@@ -4,6 +4,7 @@
   "description": "WWA Macro Parser",
   "main": "index.js",
   "scripts": {
+    "test": "jest",
     "tsc": "tsc"
   },
   "author": "Aruneko",
