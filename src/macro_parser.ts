@@ -47,6 +47,11 @@ export class MacroParser {
             Parser.seq([this.num, this.comma, this.num, this.eol]),
         ]
     );
+    private face_args = Parser.seq([
+        this.num, this.comma, this.num, this.comma,
+        this.num, this.comma, this.num, this.comma,
+        this.num, this.comma, this.num_eol
+    ]);
 
     // 各マクロのパーサ
     private imgplayer = this.make_macro_parser('imgplayer', this.position);
@@ -57,6 +62,8 @@ export class MacroParser {
     private default = this.make_macro_parser('default', this.bool_eol);
     private oldmap = this.make_macro_parser('oldmap', this.bool_eol);
     private parts = this.make_macro_parser('parts', this.replace_parts);
+    private move = this.make_macro_parser('move', this.num_eol);
+    private face = this.make_macro_parser('face', this.face_args);
 
     private macro_parser = Parser.choice([
         this.imgplayer,
@@ -67,6 +74,8 @@ export class MacroParser {
         this.default,
         this.oldmap,
         this.parts,
+        this.move,
+        this.face,
     ]);
 
     parse: () => ParseResult = () => {

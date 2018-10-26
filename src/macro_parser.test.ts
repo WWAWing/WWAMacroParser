@@ -116,3 +116,14 @@ describe('parse parts', () => {
         expect(new MacroParser(`$${name}=9,72,2`).parse()).toEqual(`$${name}=9,72,2`);
     });
 });
+
+describe('parse face', () => {
+    const name = 'face';
+    it('success', () => {
+        expect(new MacroParser(`$${name}=100,110,5,10,1,1`).parse()).toEqual(new Macro(name, ['100', '110', '5', '10', '1', '1']));
+    });
+    it('failure', () => {
+        expect(new MacroParser(`$${name}=100,110,5,10,1`).parse()).toEqual(`$${name}=100,110,5,10,1`);
+        expect(new MacroParser(`$${name}=100,110,5,10,1,1,2`).parse()).toEqual(`$${name}=100,110,5,10,1,1,2`);
+    });
+});
