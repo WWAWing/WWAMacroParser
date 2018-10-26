@@ -127,3 +127,15 @@ describe('parse face', () => {
         expect(new MacroParser(`$${name}=100,110,5,10,1,1,2`).parse()).toEqual(`$${name}=100,110,5,10,1,1,2`);
     });
 });
+
+describe('parse delplayer', () => {
+    const name = 'delplayer';
+    it('success', () => {
+        expect(new MacroParser(`$${name}=0`).parse()).toEqual(new Macro(name, ['0']));
+        expect(new MacroParser(`$${name}=1`).parse()).toEqual(new Macro(name, ['1']));
+    });
+    it('failure', () => {
+        expect(new MacroParser(`$${name}=2,3`).parse()).toEqual(`$${name}=2,3`);
+        expect(new MacroParser(`$${name}=2`).parse()).toEqual(`$${name}=2`);
+    });
+});

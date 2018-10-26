@@ -64,6 +64,7 @@ export class MacroParser {
     private parts = this.make_macro_parser('parts', this.replace_parts);
     private move = this.make_macro_parser('move', this.num_eol);
     private face = this.make_macro_parser('face', this.face_args);
+    private delplayer = this.make_macro_parser('delplayer', this.bool_eol);
 
     private macro_parser = Parser.choice([
         this.imgplayer,
@@ -76,6 +77,7 @@ export class MacroParser {
         this.parts,
         this.move,
         this.face,
+        this.delplayer,
     ]);
 
     parse: () => ParseResult = () => {
