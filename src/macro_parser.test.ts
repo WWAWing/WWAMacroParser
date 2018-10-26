@@ -87,6 +87,7 @@ describe('parse default', () => {
         expect(new MacroParser(`$${name}=1`).parse()).toEqual(new Macro(name, ['1']));
     });
     it('failure', () => {
+        expect(new MacroParser(`$${name}=2,`).parse()).toEqual(`$${name}=2,`);
         expect(new MacroParser(`$${name}=2`).parse()).toEqual(`$${name}=2`);
     });
 });
@@ -98,6 +99,20 @@ describe('parse oldmap', () => {
         expect(new MacroParser(`$${name}=1`).parse()).toEqual(new Macro(name, ['1']));
     });
     it('failure', () => {
+        expect(new MacroParser(`$${name}=2,3`).parse()).toEqual(`$${name}=2,3`);
         expect(new MacroParser(`$${name}=2`).parse()).toEqual(`$${name}=2`);
+    });
+});
+
+describe('parse parts', () => {
+    const name = 'parts';
+    it('success', () => {
+        expect(new MacroParser(`$${name}=4,10`).parse()).toEqual(new Macro(name, ['4', '10']));
+        expect(new MacroParser(`$${name}=9,72,0`).parse()).toEqual(new Macro(name, ['9', '72', '0']));
+        expect(new MacroParser(`$${name}=6,15,1`).parse()).toEqual(new Macro(name, ['6', '15', '1']));
+    });
+    it('failure', () => {
+        expect(new MacroParser(`$${name}=4,10,`).parse()).toEqual(`$${name}=4,10,`);
+        expect(new MacroParser(`$${name}=9,72,2`).parse()).toEqual(`$${name}=9,72,2`);
     });
 });
