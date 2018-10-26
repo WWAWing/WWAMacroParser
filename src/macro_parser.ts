@@ -33,19 +33,30 @@ export class MacroParser {
     private num = Parser.regex(/\d+/);
     private bool = Parser.choice([Parser.char('0'), Parser.char('1')]);
     private item_range = Parser.regex(/^(1[0-2]|[0-9])/);
+    private parts_type = this.bool;
+    private eol = Parser.regex(/$/);
 
     // 引数のパターン
-    private position = Parser.seq([this.num, this.comma, this.num]);
-    private set_item = Parser.seq([this.item_range, this.comma, this.num]);
+    private position = Parser.seq([this.num, this.comma, this.num, this.eol]);
+    private num_eol = Parser.seq([this.num, this.eol]);
+    private bool_eol = Parser.seq([this.bool, this.eol]);
+    private set_item = Parser.seq([this.item_range, this.comma, this.num, this.eol]);
+    private replace_parts = Parser.choice(
+        [
+            Parser.seq([this.num, this.comma, this.num, this.comma, this.parts_type, this.eol]),
+            Parser.seq([this.num, this.comma, this.num, this.eol]),
+        ]
+    );
 
     // 各マクロのパーサ
     private imgplayer = this.make_macro_parser('imgplayer', this.position);
     private imgyesno = this.make_macro_parser('imgyesno', this.position);
-    private hpmax = this.make_macro_parser('hpmax', this.num);
-    private save = this.make_macro_parser('save', this.bool);
+    private hpmax = this.make_macro_parser('hpmax', this.num_eol);
+    private save = this.make_macro_parser('save', this.bool_eol);
     private item = this.make_macro_parser('item', this.set_item);
-    private default = this.make_macro_parser('default', this.bool);
-    private oldmap = this.make_macro_parser('oldmap', this.bool);
+    private default = this.make_macro_parser('default', this.bool_eol);
+    private oldmap = this.make_macro_parser('oldmap', this.bool_eol);
+    private parts = this.make_macro_parser('parts', this.replace_parts);
 
     private macro_parser = Parser.choice([
         this.imgplayer,
@@ -55,21 +66,24 @@ export class MacroParser {
         this.item,
         this.default,
         this.oldmap,
+        this.parts,
     ]);
 
     parse: () => ParseResult = () => {
         const parse_result = this.macro_parser(this.message, 0);
         if (parse_result instanceof Success) {
+            // マクロ名と引数に分解
             const macro_name: string = parse_result.result[1];
-            const raw_args = parse_result.result[3];
-            if (raw_args instanceof Array) {
-                const macro_args = raw_args.filter((c: string) => c !== ",");
-                return new Macro(macro_name, macro_args);
-            } else {
-                return new Macro(macro_name, [raw_args]);
-            }
-            
+            const raw_args: Array<Array<string>> = parse_result.result[3];
+            // 結果の返却
+            // 引数はネストされて出てくるのでフラットにしてからカンマを除去
+            // 行末の終端記号もパースされるので除去しておく
+            const macro_args = raw_args.reduce(
+                (acc, val) => acc.concat(val), []
+            ).slice(0, -1).filter((c: string) => c !== ",");
+            return new Macro(macro_name, macro_args);
         } else {
+            // パースに失敗したときは入ってきた文字列をそのまま返す
             return this.message;
         }
     }
