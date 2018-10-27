@@ -61,6 +61,10 @@ export class MacroParser {
         this.color_range, this.comma,
         this.color_range, this.eol,
     ]);
+    private dirmap_args = Parser.choice([
+        Parser.seq([this.num, this.comma, this.num, this.comma, this.parts_type, this.eol]),
+        Parser.seq([this.num, this.comma, this.num, this.eol]),
+    ]);
 
     // 各マクロのパーサ
     private imgplayer = this.make_macro_parser('imgplayer', this.position);
@@ -76,6 +80,7 @@ export class MacroParser {
     private delplayer = this.make_macro_parser('delplayer', this.bool_eol);
     private color = this.make_macro_parser('color', this.color_args);
     private gameover = this.make_macro_parser('gameover', this.position);
+    private dirmap = this.make_macro_parser('dirmap', this.dirmap_args);
 
     private macro_parser = Parser.choice([
         this.imgplayer,
@@ -91,6 +96,7 @@ export class MacroParser {
         this.delplayer,
         this.color,
         this.gameover,
+        this.dirmap,
     ]);
 
     parse: () => ParseResult = () => {
