@@ -69,6 +69,10 @@ export class MacroParser {
         Parser.seq([this.num, this.comma, this.num, this.comma, this.num, this.comma, this.parts_type, this.eol]),
         Parser.seq([this.num, this.comma, this.num, this.comma, this.num_eol]),
     ]);
+    // ToDo: 第一引数の値の制限
+    private imgframe_args = Parser.seq([
+        this.num, this.comma, this.parts_x, this.comma, this.num_eol,
+    ]);
 
     // 各マクロのパーサ
     private imgplayer = this.make_macro_parser('imgplayer', this.position);
@@ -86,6 +90,7 @@ export class MacroParser {
     private gameover = this.make_macro_parser('gameover', this.position);
     private dirmap = this.make_macro_parser('dirmap', this.dirmap_args);
     private map = this.make_macro_parser('map', this.map_args);
+    private imgframe = this.make_macro_parser('imgframe', this.imgframe_args);
 
     private macro_parser = Parser.choice([
         this.imgplayer,
@@ -103,6 +108,7 @@ export class MacroParser {
         this.gameover,
         this.dirmap,
         this.map,
+        this.imgframe,
     ]);
 
     parse: () => ParseResult = () => {

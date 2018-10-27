@@ -193,3 +193,14 @@ describe('parse map', () => {
         expect(new MacroParser(`$${name}=1`).parse()).toEqual(`$${name}=1`);
     });
 });
+
+describe('parse imgframe', () => {
+    const name = 'imgframe';
+    it('success', () => {
+        expect(new MacroParser(`$${name}=1,2,3`).parse()).toEqual(new Macro(name, ['1', '2', '3']));
+    });
+    it('failure', () => {
+        expect(new MacroParser(`$${name}=1,2,3,`).parse()).toEqual(`$${name}=1,2,3,`);
+        expect(new MacroParser(`$${name}=1,2`).parse()).toEqual(`$${name}=1,2`);
+    });
+});
