@@ -179,3 +179,17 @@ describe('parse dirmap', () => {
         expect(new MacroParser(`$${name}=1`).parse()).toEqual(`$${name}=1`);
     });
 });
+
+describe('parse map', () => {
+    const name = 'map';
+    it('success', () => {
+        expect(new MacroParser(`$${name}=1,2,3`).parse()).toEqual(new Macro(name, ['1', '2', '3']));
+        expect(new MacroParser(`$${name}=1,2,3,0`).parse()).toEqual(new Macro(name, ['1', '2', '3', '0']));
+        expect(new MacroParser(`$${name}=1,2,3,1`).parse()).toEqual(new Macro(name, ['1', '2', '3', '1']));
+    });
+    it('failure', () => {
+        expect(new MacroParser(`$${name}=1,2,3,2`).parse()).toEqual(`$${name}=1,2,3,2`);
+        expect(new MacroParser(`$${name}=1,2,3,`).parse()).toEqual(`$${name}=1,2,3,`);
+        expect(new MacroParser(`$${name}=1`).parse()).toEqual(`$${name}=1`);
+    });
+});
