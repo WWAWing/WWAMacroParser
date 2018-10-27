@@ -217,3 +217,15 @@ describe('parse imgframe', () => {
         expect(new MacroParser(`$${name}=1,2`).parse()).toEqual(`$${name}=1,2`);
     });
 });
+
+describe('parse imgbom', () => {
+    const name = 'imgbom';
+    it('success', () => {
+        expect(new MacroParser(`$${name}=1,3`).parse()).toEqual(new Macro(name, ['1', '3']));
+        expect(new MacroParser(`$${name}=10,3`).parse()).toEqual(new Macro(name, ['10', '3']));
+    });
+    it('failure', () => {
+        expect(new MacroParser(`$${name}=11,3`).parse()).toEqual(`$${name}=11,3`);
+        expect(new MacroParser(`$${name}=1,2,`).parse()).toEqual(`$${name}=1,2,`);
+    });
+});

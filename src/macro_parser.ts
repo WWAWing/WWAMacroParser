@@ -77,6 +77,9 @@ export class MacroParser {
     private imgframe_args = Parser.seq([
         this.num, this.comma, this.parts_x, this.comma, this.num_eol,
     ]);
+    private imgbom_args = Parser.seq([
+        this.parts_x, this.comma, this.num_eol,
+    ]);
 
     // 各マクロのパーサ
     private imgplayer = this.make_macro_parser('imgplayer', this.position);
@@ -96,6 +99,7 @@ export class MacroParser {
     private dirmap = this.make_macro_parser('dirmap', this.dirmap_args);
     private map = this.make_macro_parser('map', this.map_args);
     private imgframe = this.make_macro_parser('imgframe', this.imgframe_args);
+    private imgbom = this.make_macro_parser('imgbom', this.imgbom_args);
 
     private macro_parser = Parser.choice([
         this.imgplayer,
@@ -115,6 +119,7 @@ export class MacroParser {
         this.dirmap,
         this.map,
         this.imgframe,
+        this.imgbom,
     ]);
 
     parse: () => ParseResult = () => {
