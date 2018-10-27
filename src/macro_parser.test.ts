@@ -139,3 +139,19 @@ describe('parse delplayer', () => {
         expect(new MacroParser(`$${name}=2`).parse()).toEqual(`$${name}=2`);
     });
 });
+
+describe('parse color', () => {
+    const name = 'color';
+    it('success', () => {
+        expect(new MacroParser(`$${name}=0,255,255,255`).parse()).toEqual(new Macro(name, ['0', '255', '255', '255']));
+        expect(new MacroParser(`$${name}=1,0,0,0`).parse()).toEqual(new Macro(name, ['1', '0', '0', '0']));
+        expect(new MacroParser(`$${name}=2,123,123,123`).parse()).toEqual(new Macro(name, ['2', '123', '123', '123']));
+        expect(new MacroParser(`$${name}=4,53,53,53`).parse()).toEqual(new Macro(name, ['4', '53', '53', '53']));
+    });
+    it('failure', () => {
+        expect(new MacroParser(`$${name}=3,255,255,255`).parse()).toEqual(`$${name}=3,255,255,255`);
+        expect(new MacroParser(`$${name}=5,255,255,255`).parse()).toEqual(`$${name}=5,255,255,255`);
+        expect(new MacroParser(`$${name}=0,256,256,256`).parse()).toEqual(`$${name}=0,256,256,256`);
+        expect(new MacroParser(`$${name}=0,-1,-1,-1`).parse()).toEqual(`$${name}=0,-1,-1,-1`);
+    });
+});

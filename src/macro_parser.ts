@@ -35,6 +35,9 @@ export class MacroParser {
     private item_range = Parser.regex(/^(1[0-2]|[0-9])/);
     private parts_type = this.bool;
     private eol = Parser.regex(/$/);
+    private parts_x = Parser.regex(/^(10|[1-9])/);
+    private color_type = Parser.regex(/[0-2]|4/);
+    private color_range = Parser.regex(/2[0-5][0-5]|1[0-9][0-9]|[1-9][0-9]|[0-9]/)
 
     // 引数のパターン
     private position = Parser.seq([this.num, this.comma, this.num, this.eol]);
@@ -49,8 +52,14 @@ export class MacroParser {
     );
     private face_args = Parser.seq([
         this.num, this.comma, this.num, this.comma,
-        this.num, this.comma, this.num, this.comma,
-        this.num, this.comma, this.num_eol
+        this.parts_x, this.comma, this.num, this.comma,
+        this.num, this.comma, this.num_eol,
+    ]);
+    private color_args = Parser.seq([
+        this.color_type, this.comma,
+        this.color_range, this.comma,
+        this.color_range, this.comma,
+        this.color_range, this.eol,
     ]);
 
     // 各マクロのパーサ
@@ -65,6 +74,7 @@ export class MacroParser {
     private move = this.make_macro_parser('move', this.num_eol);
     private face = this.make_macro_parser('face', this.face_args);
     private delplayer = this.make_macro_parser('delplayer', this.bool_eol);
+    private color = this.make_macro_parser('color', this.color_args);
 
     private macro_parser = Parser.choice([
         this.imgplayer,
@@ -78,6 +88,7 @@ export class MacroParser {
         this.move,
         this.face,
         this.delplayer,
+        this.color,
     ]);
 
     parse: () => ParseResult = () => {
