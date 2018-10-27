@@ -155,3 +155,13 @@ describe('parse color', () => {
         expect(new MacroParser(`$${name}=0,-1,-1,-1`).parse()).toEqual(`$${name}=0,-1,-1,-1`);
     });
 });
+
+describe('parse gameover', () => {
+    const name = 'gameover';
+    it('success', () => {
+        expect(new MacroParser(`$${name}=1,2`).parse()).toEqual(new Macro('gameover', ['1', '2']));
+    });
+    it('failure', () => {
+        expect(new MacroParser(`$${name}=1`).parse()).toEqual(`$${name}=1`);
+    });
+});

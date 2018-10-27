@@ -75,6 +75,7 @@ export class MacroParser {
     private face = this.make_macro_parser('face', this.face_args);
     private delplayer = this.make_macro_parser('delplayer', this.bool_eol);
     private color = this.make_macro_parser('color', this.color_args);
+    private gameover = this.make_macro_parser('gameover', this.position);
 
     private macro_parser = Parser.choice([
         this.imgplayer,
@@ -89,6 +90,7 @@ export class MacroParser {
         this.face,
         this.delplayer,
         this.color,
+        this.gameover,
     ]);
 
     parse: () => ParseResult = () => {
