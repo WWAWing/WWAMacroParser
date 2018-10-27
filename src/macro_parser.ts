@@ -80,6 +80,9 @@ export class MacroParser {
     private imgbom_args = Parser.seq([
         this.parts_x, this.comma, this.num_eol,
     ]);
+    private effect_args = Parser.seq([
+        this.num, this.comma, this.parts_x, this.comma, this.num_eol,
+    ]);
 
     // 各マクロのパーサ
     private imgplayer = this.make_macro_parser('imgplayer', this.position);
@@ -100,6 +103,7 @@ export class MacroParser {
     private map = this.make_macro_parser('map', this.map_args);
     private imgframe = this.make_macro_parser('imgframe', this.imgframe_args);
     private imgbom = this.make_macro_parser('imgbom', this.imgbom_args);
+    private effect = this.make_macro_parser('effect', this.effect_args);
 
     private macro_parser = Parser.choice([
         this.imgplayer,
@@ -120,6 +124,7 @@ export class MacroParser {
         this.map,
         this.imgframe,
         this.imgbom,
+        this.effect,
     ]);
 
     parse: () => ParseResult = () => {

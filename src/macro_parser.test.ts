@@ -229,3 +229,16 @@ describe('parse imgbom', () => {
         expect(new MacroParser(`$${name}=1,2,`).parse()).toEqual(`$${name}=1,2,`);
     });
 });
+
+describe('parse effect', () => {
+    const name = 'effect';
+    it('success', () => {
+        expect(new MacroParser(`$${name}=100,3,4`).parse()).toEqual(new Macro(name, ['100', '3', '4']));
+        expect(new MacroParser(`$${name}=5,10,10`).parse()).toEqual(new Macro(name, ['5', '10', '10']));
+    });
+    it('failure', () => {
+        expect(new MacroParser(`$${name}=100,11,4`).parse()).toEqual(`$${name}=100,11,4`);
+        expect(new MacroParser(`$${name}=11,3`).parse()).toEqual(`$${name}=11,3`);
+        expect(new MacroParser(`$${name}=1,2,`).parse()).toEqual(`$${name}=1,2,`);
+    });
+});
