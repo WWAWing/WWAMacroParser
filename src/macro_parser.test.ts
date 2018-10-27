@@ -140,6 +140,19 @@ describe('parse delplayer', () => {
     });
 });
 
+describe('parse imgclick', () => {
+    const name = 'imgclick';
+    it('success', () => {
+        expect(new MacroParser(`$${name}=0`).parse()).toEqual(new Macro(name, ['0']));
+        expect(new MacroParser(`$${name}=7,13`).parse()).toEqual(new Macro(name, ['7', '13']));
+    });
+    it('failure', () => {
+        expect(new MacroParser(`$${name}=1`).parse()).toEqual(`$${name}=1`);
+        expect(new MacroParser(`$${name}=1,`).parse()).toEqual(`$${name}=1,`);
+        expect(new MacroParser(`$${name}=1,2,`).parse()).toEqual(`$${name}=1,2,`);
+    });
+});
+
 describe('parse color', () => {
     const name = 'color';
     it('success', () => {

@@ -55,6 +55,10 @@ export class MacroParser {
         this.parts_x, this.comma, this.num, this.comma,
         this.num, this.comma, this.num_eol,
     ]);
+    private imgclick_args = Parser.choice([
+        Parser.seq([Parser.char('0'), this.eol]),
+        Parser.seq([this.parts_x, this.comma, this.num_eol]),
+    ]);
     private color_args = Parser.seq([
         this.color_type, this.comma,
         this.color_range, this.comma,
@@ -86,6 +90,7 @@ export class MacroParser {
     private move = this.make_macro_parser('move', this.num_eol);
     private face = this.make_macro_parser('face', this.face_args);
     private delplayer = this.make_macro_parser('delplayer', this.bool_eol);
+    private imgclick = this.make_macro_parser('imgclick', this.imgclick_args);
     private color = this.make_macro_parser('color', this.color_args);
     private gameover = this.make_macro_parser('gameover', this.position);
     private dirmap = this.make_macro_parser('dirmap', this.dirmap_args);
@@ -104,6 +109,7 @@ export class MacroParser {
         this.move,
         this.face,
         this.delplayer,
+        this.imgclick,
         this.color,
         this.gameover,
         this.dirmap,
