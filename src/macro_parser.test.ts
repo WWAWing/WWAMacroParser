@@ -242,3 +242,17 @@ describe('parse effect', () => {
         expect(new MacroParser(`$${name}=1,2,`).parse()).toEqual(`$${name}=1,2,`);
     });
 });
+
+describe('parse status', () => {
+    const name = 'status';
+    it('success', () => {
+        expect(new MacroParser(`$${name}=0,100`).parse()).toEqual(new Macro(name, ['0', '100']));
+        expect(new MacroParser(`$${name}=2,500`).parse()).toEqual(new Macro(name, ['2', '500']));
+        expect(new MacroParser(`$${name}=4,10000`).parse()).toEqual(new Macro(name, ['4', '10000']));
+    });
+    it('failure', () => {
+        expect(new MacroParser(`$${name}=100,11,4`).parse()).toEqual(`$${name}=100,11,4`);
+        expect(new MacroParser(`$${name}=11,3`).parse()).toEqual(`$${name}=11,3`);
+        expect(new MacroParser(`$${name}=1,2,`).parse()).toEqual(`$${name}=1,2,`);
+    });
+});
