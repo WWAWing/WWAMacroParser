@@ -2,7 +2,7 @@
   "name": "wwa_macro_parser",
   "version": "1.0.0",
   "description": "WWA Macro Parser",
-  "main": "index.js",
+  "main": "./lib",
   "scripts": {
     "test": "jest",
     "tsc": "tsc"
