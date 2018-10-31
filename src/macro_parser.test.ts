@@ -256,3 +256,16 @@ describe('parse status', () => {
         expect(new MacroParser(`$${name}=1,2,`).parse()).toEqual(`$${name}=1,2,`);
     });
 });
+
+describe('parse sound', () => {
+    const name = 'sound';
+    it('success', () => {
+        expect(new MacroParser(`$${name}=1`).parse()).toEqual(new Macro(name, ['1']));
+        expect(new MacroParser(`$${name}=256`).parse()).toEqual(new Macro(name, ['256']));
+    });
+    it('failure', () => {
+        expect(new MacroParser(`$${name}=1,`).parse()).toEqual(`$${name}=1,`);
+        expect(new MacroParser(`$${name}=`).parse()).toEqual(`$${name}=`);
+        expect(new MacroParser(`$${name}=a`).parse()).toEqual(`$${name}=a`);
+    });
+});

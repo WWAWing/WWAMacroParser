@@ -109,6 +109,7 @@ export class MacroParser {
     private imgbom = this.make_macro_parser('imgbom', this.imgbom_args);
     private effect = this.make_macro_parser('effect', this.effect_args);
     private status = this.make_macro_parser('status', this.status_args);
+    private sound = this.make_macro_parser('sound', this.num_eol);
 
     private macro_parser = Parser.choice([
         this.imgplayer,
@@ -131,6 +132,7 @@ export class MacroParser {
         this.imgbom,
         this.effect,
         this.status,
+        this.sound,
     ]);
 
     parse: () => ParseResult = () => {
