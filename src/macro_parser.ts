@@ -37,7 +37,7 @@ export class MacroParser {
     private eol = Parser.regex(/$/);
     private parts_x = Parser.regex(/^(10|[1-9])/);
     private color_type = Parser.regex(/[0-2]|4/);
-    private color_range = Parser.regex(/2[0-5][0-5]|1[0-9][0-9]|[1-9][0-9]|[0-9]/);
+    private color_range = Parser.regex(/25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9]/);
     private status_type = Parser.regex(/[0-4]/);
 
     // 引数のパターン

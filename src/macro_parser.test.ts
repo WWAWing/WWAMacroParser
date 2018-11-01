@@ -160,6 +160,7 @@ describe('parse color', () => {
         expect(new MacroParser(`$${name}=1,0,0,0`).parse()).toEqual(new Macro(name, ['1', '0', '0', '0']));
         expect(new MacroParser(`$${name}=2,123,123,123`).parse()).toEqual(new Macro(name, ['2', '123', '123', '123']));
         expect(new MacroParser(`$${name}=4,53,53,53`).parse()).toEqual(new Macro(name, ['4', '53', '53', '53']));
+        expect(new MacroParser(`$${name}=0,209,217,231`).parse()).toEqual(new Macro(name, ['0', '209', '217', '231']));
     });
     it('failure', () => {
         expect(new MacroParser(`$${name}=3,255,255,255`).parse()).toEqual(`$${name}=3,255,255,255`);
