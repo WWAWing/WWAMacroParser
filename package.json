@@ -10,9 +10,9 @@
   "author": "Aruneko",
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^23.3.7",
+    "@types/jest": "^23.3.10",
     "jest": "^23.6.0",
-    "ts-jest": "^23.10.4",
-    "typescript": "^3.1.3"
+    "ts-jest": "^23.10.5",
+    "typescript": "^3.2.2"
   }
 }
