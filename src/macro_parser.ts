@@ -12,6 +12,8 @@ export class Macro {
 
 type ParseResult = Macro | string;
 
+type RawArgs = (string | RawArgs)[];
+
 export class MacroParser {
     message: string;
 
@@ -31,75 +33,69 @@ export class MacroParser {
 
     // 引数にとる値
     private num = Parser.regex(/\d+/);
-    private bool = Parser.choice([Parser.char('0'), Parser.char('1')]);
-    private item_range = Parser.regex(/^(1[0-2]|[0-9])/);
-    private parts_type = this.bool;
     private eol = Parser.regex(/$/);
-    private parts_x = Parser.regex(/^(10|[1-9])/);
-    private color_type = Parser.regex(/[0-2]|4/);
-    private color_range = Parser.regex(/25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9]/);
-    private status_type = Parser.regex(/[0-4]/);
 
     // 引数のパターン
     private position = Parser.seq([this.num, this.comma, this.num, this.eol]);
     private num_eol = Parser.seq([this.num, this.eol]);
-    private bool_eol = Parser.seq([this.bool, this.eol]);
-    private set_item = Parser.seq([this.item_range, this.comma, this.num, this.eol]);
+    private set_item = Parser.seq([this.num, this.comma, this.num, this.eol]);
     private replace_parts = Parser.choice(
         [
-            Parser.seq([this.num, this.comma, this.num, this.comma, this.parts_type, this.eol]),
+            Parser.seq([this.num, this.comma, this.num, this.comma, this.num, this.eol]),
             Parser.seq([this.num, this.comma, this.num, this.eol]),
         ]
     );
     private face_args = Parser.seq([
         this.num, this.comma, this.num, this.comma,
-        this.parts_x, this.comma, this.num, this.comma,
+        this.num, this.comma, this.num, this.comma,
         this.num, this.comma, this.num_eol,
     ]);
     private imgclick_args = Parser.choice([
-        Parser.seq([Parser.char('0'), this.eol]),
-        Parser.seq([this.parts_x, this.comma, this.num_eol]),
+        Parser.seq([
+            this.num, Parser.option(
+                Parser.seq([this.comma, this.num]),
+            ), this.eol
+        ]),
     ]);
     private color_args = Parser.seq([
-        this.color_type, this.comma,
-        this.color_range, this.comma,
-        this.color_range, this.comma,
-        this.color_range, this.eol,
+        this.num, this.comma,
+        this.num, this.comma,
+        this.num, this.comma,
+        this.num, this.eol,
     ]);
     private dirmap_args = Parser.choice([
-        Parser.seq([this.num, this.comma, this.num, this.comma, this.parts_type, this.eol]),
+        Parser.seq([this.num, this.comma, this.num, this.comma, this.num, this.eol]),
         Parser.seq([this.num, this.comma, this.num_eol]),
     ]);
     private map_args = Parser.choice([
-        Parser.seq([this.num, this.comma, this.num, this.comma, this.num, this.comma, this.parts_type, this.eol]),
+        Parser.seq([this.num, this.comma, this.num, this.comma, this.num, this.comma, this.num, this.eol]),
         Parser.seq([this.num, this.comma, this.num, this.comma, this.num_eol]),
     ]);
-    // ToDo: 第一引数の値の制限
     private imgframe_args = Parser.seq([
-        this.num, this.comma, this.parts_x, this.comma, this.num_eol,
+        this.num, this.comma, this.num, this.comma, this.num_eol,
     ]);
     private imgbom_args = Parser.seq([
-        this.parts_x, this.comma, this.num_eol,
+        this.num, this.comma, this.num_eol,
     ]);
     private effect_args = Parser.seq([
-        this.num, this.comma, this.parts_x, this.comma, this.num_eol,
+        this.num, this.comma, this.num, this.comma, this.num_eol,
     ]);
     private status_args = Parser.seq([
-        this.status_type, this.comma, this.num_eol
+        this.num, this.comma, this.num_eol
     ]);
 
     // 各マクロのパーサ
     private imgplayer = this.make_macro_parser('imgplayer', this.position);
     private imgyesno = this.make_macro_parser('imgyesno', this.position);
     private hpmax = this.make_macro_parser('hpmax', this.num_eol);
-    private save = this.make_macro_parser('save', this.bool_eol);
+    private save = this.make_macro_parser('save', this.num_eol);
     private item = this.make_macro_parser('item', this.set_item);
-    private default = this.make_macro_parser('default', this.bool_eol);
-    private oldmap = this.make_macro_parser('oldmap', this.bool_eol);
+    private default = this.make_macro_parser('default', this.num_eol);
+    private oldmap = this.make_macro_parser('oldmap', this.num_eol);
     private parts = this.make_macro_parser('parts', this.replace_parts);
     private move = this.make_macro_parser('move', this.num_eol);
     private face = this.make_macro_parser('face', this.face_args);
-    private delplayer = this.make_macro_parser('delplayer', this.bool_eol);
+    private delplayer = this.make_macro_parser('delplayer', this.num_eol);
     private imgclick = this.make_macro_parser('imgclick', this.imgclick_args);
     private color = this.make_macro_parser('color', this.color_args);
     private gameover = this.make_macro_parser('gameover', this.position);
@@ -135,19 +131,27 @@ export class MacroParser {
         this.sound,
     ]);
 
+    private resolveArgs = (raw_args: RawArgs): string[] => {
+        return raw_args.reduce<string[]>(
+            (acc, val) => acc.concat(
+                val instanceof Array ? this.resolveArgs(val) : val)
+            , []);
+    }
+
     parse: () => ParseResult = () => {
         const parse_result = this.macro_parser(this.message, 0);
         if (parse_result instanceof Success) {
             // マクロ名と引数に分解
             const macro_name: string = parse_result.result[1];
-            const raw_args: Array<Array<string>> = parse_result.result[3];
+            const raw_args: RawArgs = parse_result.result[3];
             // 結果の返却
             // 引数はネストされて出てくるのでフラットにしてからカンマを除去
             // 行末の終端記号もパースされるので除去しておく
-            const macro_args = raw_args.reduce(
-                (acc, val) => acc.concat(val), []
-            ).slice(0, -1).filter((c: string) => c !== ",");
+            const macro_args = this.resolveArgs(raw_args).slice(0, -1).filter((c: string | null) => c && c !== ",");
             return new Macro(macro_name, macro_args);
+        } else if (this.message[0] === "$") {
+            // パースに失敗したときで、最初の文字が $ の場合はコメント行扱い
+            return "";
         } else {
             // パースに失敗したときは入ってきた文字列をそのまま返す
             return this.message;
